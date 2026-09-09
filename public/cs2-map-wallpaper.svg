@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="CS2-inspired tactical map wallpaper">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#0b1822"/><stop offset=".5" stop-color="#172a35"/><stop offset="1" stop-color="#071018"/></linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#78d7ee" stroke-opacity=".08"/></pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/><rect width="1920" height="1080" fill="url(#grid)"/>
+  <g fill="#07131b" fill-opacity=".72" stroke="#62cce2" stroke-opacity=".55" stroke-width="5" stroke-linejoin="round">
+    <path d="M100 140h420v170h180v150h220v-90h190v-210h350v180h250v210h120v270h-260v130h-330V790H810v160H560V790H300V610H100z"/>
+    <path d="M720 460h220v-90h190v210h-80v180H830V610H720z"/>
+    <path d="M1340 600h300v220h-150v130h-210V770z"/>
+  </g>
+  <g fill="none" stroke="#9ae9f8" stroke-opacity=".42" stroke-width="2"><path d="M180 220h260M180 260h180M1450 300h230M1460 340h140M930 540h300M930 580h220"/><path d="M350 610v120M390 610v120M1510 650v110M1550 650v110"/></g>
+  <g fill="#a8efff" fill-opacity=".7" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="4"><text x="210" y="250">T SPAWN</text><text x="1010" y="515">MID</text><text x="1500" y="730">CT</text><text x="270" y="700">A</text><text x="1525" y="910">B</text></g>
+  <g fill="#ffcf66" filter="url(#glow)"><circle cx="310" cy="680" r="9"/><circle cx="1515" cy="880" r="9"/></g>
+  <text x="96" y="1010" fill="#9ae9f8" fill-opacity=".36" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">CS2 PANORAMA WORKSPACE · TACTICAL MAP PREVIEW</text>
+</svg>
