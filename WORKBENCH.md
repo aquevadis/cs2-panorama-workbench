@@ -2,53 +2,82 @@
 
 ## Setup
 
-1. Install Node.js 20 or newer and Python 3.10 or newer.
-2. Copy this folder to a writable project location.
+1. Install Node.js 20+ and Python 3.10+.
+2. Copy this folder to a writable location.
 3. Run `npm install` and `npm run dev`.
-4. Add layouts below `panorama/layout/custom_game` and styles below `panorama/styles/custom_game`. The browser preview refreshes automatically.
+4. Use **Edit Work Path** to select the local directory containing editable Panorama assets.
 
-The preview is a browser geometry approximation. Confirm final rendering in CS2.
+The browser preview approximates Source 2. Confirm final geometry, fonts, materials, particles, and game-driven behavior in CS2 at the same resolution.
 
-Place layouts anywhere under `panorama/layout/custom_game` and styles anywhere under `panorama/styles/custom_game`. A workbench-rooted development endpoint scans both directories recursively on startup, window focus, and every two seconds, including uppercase file extensions and files added after Vite started. This remains correct even when Vite is launched from a different terminal directory. Production builds use the statically bundled files. The editor converts compiled includes such as `s2r://panorama/styles/custom_game/example.vcss_c` into the loose relative file `panorama/styles/custom_game/example.vcss`, including nested paths. When no include resolves, it checks the layout's same relative name under the default styles directory and uses that location as the Save target.
+## Source workspace
 
-For browser rendering, the loader retries strict VXML parsing after escaping bare ampersands used by Source 2 event expressions. This compatibility pass does not rewrite the source file.
+The workbench keeps one path in `panorama.config.json`:
 
-The header layout dropdown contains only parseable `<root>` documents with at least one editable `Panel`, `Label`, `Image`, or `Button` root. The File dropdown provides:
+```json
+{
+  "nonCompiledDir": "D:/project/panorama",
+  "desktopOutputDir": "C:/Users/YOU/Desktop",
+  "cs2Exe": "",
+  "vpkExe": "C:/.../game/bin/win64/vpk.exe",
+  "reloadCommand": ""
+}
+```
 
-- **Save:** writes detected workspace layouts and matched styles back into the guarded `panorama/layout/custom_game` and `panorama/styles/custom_game` roots. Files opened from outside the workspace are retained as browser drafts; use Download ZIP to export them.
-- **Open:** imports one local `.vxml` and an optional `.vcss` into the current editor session.
-- **Download ZIP:** exports the current generated sources under `panorama/layout/custom_game` and `panorama/styles/custom_game` in a ready-to-extract ZIP.
+`nonCompiledDir` is both the discovery root and the Save/Copy destination. The editor scans it every two seconds and on focus:
 
-The editor toolbar creates native `Panel`, `Label`, `Image`, and `Button` nodes. Select a node in the hierarchy or canvas to edit its ID, class, text/source, and cached Panorama VCSS properties. The property editor supplies a type-aware default and hint for each exposed property, adds `px` to unitless lengths, expands three-axis positions, normalizes Panorama colors to RGBA hex, clamps opacity, preserves unitless scale factors, and restricts known enumerations to supported values. New values normalize on blur and Apply; existing values normalize on blur. Imported panel attributes such as `hittest` are retained in generated output. The generated-source drawer updates instantly with VXML and VCSS suitable for copying into the engine project.
+```text
+nonCompiledDir/
+├── layout/custom_game/**/*.vxml
+├── styles/custom_game/**/*.vcss
+└── scripts/custom_game/**/*.{js,vjs}
+```
 
-Undo and Redo are available in the editor header. Use `Ctrl+Z`/`Ctrl+Y` on Windows and Linux, or `Cmd+Z`/`Cmd+Shift+Z` on macOS. The workbench retains the latest 100 editing states and clears redo history after a new edit.
+Nested directories and uppercase extensions are supported. A compiled include such as `s2r://panorama/styles/custom_game/example.vcss_c` resolves to the loose `styles/custom_game/example.vcss` file. The old edited-assets destination and synchronization action have been removed; Save writes directly to the configured source workspace through a development-only endpoint restricted to the two `custom_game` roots.
 
-The workspace renders against selectable 1280×720, 1920×1080, 2560×1440, and 3440×1440 reference canvases. The supplied 1920×1080 `mnight.jpg` and `dust2.jpg` images are used as the dark and bright map wallpapers. Use the `Bright/Dark Map theme` button to switch them; the separate Map wallpaper checkbox can hide the image entirely. Select a component to see its viewport-relative X/Y position, width, height, right/bottom offsets, and percentage position. The yellow bounds and crosshair use the same logical coordinate system. The canvas maps Panorama `position`, `x`, `y`, `z`, `align`, `horizontal-align`, `vertical-align`, `flow-children`, `fit-children`, and `fill-parent-flow` semantics into a 1:1 logical reference frame; labels are block panels so authored dimensions are not lost to browser inline layout. Non-flowing authored frames layer children at their engine origin while flowing parents retain row/column layout. `Show all layers` temporarily reveals panels hidden by `opacity: 0` or `visibility: collapse`, so overlapping HUD states can be inspected together without changing generated VXML/VCSS. Clicking the same overlapping point repeatedly cycles through the component stack; the hierarchy remains a direct selector. These are exact browser-canvas measurements, but Panorama font metrics, UI scaling, materials, and engine composition can differ; compare a CS2 screenshot at the same resolution before calling the result pixel-perfect.
+## Header
 
-The browser preview adapter translates the cached VCSS effects it can represent safely: Panorama gradients, background images, transform origins (including `transform-origin-z`), `wash-color` tint overlays, blur/background blur, box and text shadows, saturation, hue rotation, brightness, contrast, transitions, visibility, compound class selectors, inline declarations, and layout flow. Source 2 sizing keywords are normalized to browser equivalents only in the preview; generated VXML/VCSS retains the authored Panorama values. Unsupported Source 2 resources or engine-only composition behavior remain labeled as preview approximations.
+The full-width **Layout** menu searches valid discovered layouts. Clicking a layout name switches workspaces. Hover a layout row and use its `↗` insert icon to add that layout's complete component tree to the current workspace without switching files. Imported descendants remain nested, imported VCSS/keyframes are retained, and duplicate IDs receive collision-safe `_import` suffixes.
 
-The development server binds both HTTP and HMR to `127.0.0.1:3000`, preventing the browser from guessing a different WebSocket address. If a corporate proxy or embedded browser blocks WebSockets entirely, run `npm run dev:no-hmr`; this disables the HMR client and removes its reconnect error while keeping the editor usable. Refresh the page manually in that mode. Override the endpoint with `PANORAMA_DEV_HOST` and `PANORAMA_DEV_PORT` when required.
+The VCSS info icon shows every matched stylesheet on hover/focus. **Edit Work Path** contains one free-text path input and a native **Browse** action. The equally sized **File** menu provides:
 
-## Local CS2 configuration
+- **Save** — writes the current VXML and VCSS to the source workspace.
+- **Copy Layout…** — saves a renamed copy while preserving nested relative paths and retargeting its VCSS include.
+- **Open…** — imports one `.vxml` and optional `.vcss` as a browser draft.
+- **Open Folder…** — selects a complete local Panorama source folder, persists it as `nonCompiledDir`, and refreshes discovery immediately. If the native folder picker is unavailable, the Edit Work Path dialog opens for manual entry.
+- **Download ZIP** — exports the generated `panorama/layout/custom_game` and `panorama/styles/custom_game` structure.
 
-Edit `panorama.config.json` with Windows paths. `gameTargetDir` must be a dedicated custom directory under the Panorama tree. Leave `reloadCommand` empty unless you already have a verified reload command for your build.
+## Editor
 
-Run `npm run sync:dry` first. If the printed paths are correct, run `npm run sync`. The command attempts a directory junction on Windows and falls back to file mirroring. Stop the watcher with Ctrl+C.
+The toolbar creates `Panel`, `Label`, `Image`, and `Button` nodes. New nodes enter the nearest selected Panel; only Panels accept children. Drag hierarchy rows to reorder or move a complete subtree. The root Panel is fixed. Parent Panels are expanded by default and can be collapsed. The `⧉` icon beside ID duplicates the selected node and all descendants.
 
-Run `launch-cs2-dev.bat` to start the configured executable with `-insecure -windowed -dev -panorama`. Development flags do not install a layout manifest or guarantee that the custom HUD is loaded; connect it through the manifest/injection approach used by your project.
+The canvas actions palette's **Game HUD components** library is populated from every valid layout currently discovered in the configured source workspace. Point **Edit Work Path** or **Open Folder…** at the Hudkit module's `.assets/workshop/panorama` directory to use its example layouts. Each card renders a compact preview of the real VXML/VCSS source; activating it inserts the complete parsed layout subtree and its styles/keyframes into the current workspace. The former 60 synthetic presets are not used.
 
-## Validate and test
+The Hierarchy drawer is visible by default. Its header icon hides it; while hidden, the same icon appears immediately before **In-game reference** and restores it without changing canvas coordinates.
 
-Run `npm run validate`. Errors identify malformed XML, browser-only APIs or CSS, duplicate IDs, and properties absent from the bundled cache. Warnings identify items that need build-specific verification.
+The Inspector is a floating, draggable island on the canvas, opens by default, and remains at most 300px wide. **Viewport location** is its first section and can be collapsed independently. Drag the Inspector header to reposition it or press `×` to close it; the Inspector icon in the actions palette restores it.
 
-In CS2, test reloads, reconnects, map changes, UI scale, 16:9 and ultrawide resolutions, rapid menu visibility toggles, and frame time during volatile HUD updates.
+The VCSS picker exposes all 140 properties in `reference/panorama_css.json`. Property-family formatters add or preserve valid lengths, positions, colors, opacity, angles, durations, scales, enums, booleans, borders, shadows, transforms, resources, and transition syntax. Values normalize on blur or Apply. The palette's **Source code** icon opens a canvas panel containing editable VXML and VCSS; it is hidden by default and reparses valid changes immediately.
 
-## Package
+Undo/Redo retains 100 states and supports `Ctrl+Z`, `Ctrl+Y`, `Cmd+Z`, and `Cmd+Shift+Z`.
 
-Set `vpkExe`, or the `VPK_EXE` environment variable, then run `npm run package:vpk`. The script stages the `panorama` directory and invokes Valve's packer. It writes `custom_hud.vpk` to `desktopOutputDir`, defaulting to the current user's Desktop.
+## Canvas
 
-VPK packing does not compile raw Source 2 resources. Compile asset types that require `resourcecompiler.exe` before packaging and preserve the paths expected by VXML/VCSS.
+The canvas provides 1280×720, 1920×1080, 2560×1440, and 3440×1440 reference frames. The supplied `mnight.jpg` and `dust2.jpg` wallpapers switch with **Bright/Dark Map theme**. **Show dashed border** toggles editor-only `rgb(71 70 66 / 10%)` component boundaries. Label/Button text is shown at half inherited size; image URLs remain Inspector metadata.
 
-## Project integration points
+Drag the canvas to pan. Hold Ctrl/Cmd while clicking to select; repeat modified clicks at one point to cycle overlapping components. A fancy draggable actions palette contains Add component, `+`, `−`, reset, Inspector, and Source code controls. Zoom adjusts the auto-fit view from −400 to +400 in 50-unit steps without altering source coordinates. Drag the palette by its grip without moving the canvas below it.
 
-Replace the two sample event names in `custom_hud_controller.js` with events verified by your project. Add panel mappings in `PanoramaSandbox.tsx` for custom panel types; unsupported Source 2 panels should remain labeled placeholders rather than fabricated browser equivalents.
+The preview maps common Panorama coordinates, alignment, flow, sizing keywords, gradients, resource backgrounds, transforms, wash color, blur, shadows, color filters, transitions, visibility, inline/compound selectors, and browser-representable `@keyframes`. **Show all layers** temporarily reveals hidden panels without modifying source. Exact Source 2 rendering remains an engine verification step.
+
+## Commands
+
+```bash
+npm run dev
+npm run dev:no-hmr
+npm run build
+npm run validate
+npm run package:vpk
+```
+
+`package:vpk` invokes configured Valve `vpk.exe` against `nonCompiledDir` and copies `custom_hud.vpk` to `desktopOutputDir` (Desktop by default). VPK packaging does not compile raw Source 2 resources; run the appropriate Valve resource compiler first when an asset type requires it.
+
+The development server defaults to `127.0.0.1:3000`. Override it with `PANORAMA_DEV_HOST` and `PANORAMA_DEV_PORT`. Use `dev:no-hmr` when an embedding proxy blocks WebSockets.

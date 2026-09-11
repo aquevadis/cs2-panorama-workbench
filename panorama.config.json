@@ -1,10 +1,7 @@
 {
-	"sourceDir":"D:/bg-koka-hub-plugins/cs2-hudkit-main/cs2-hudkit-modsharp/.assets/workshop/panorama",
-	"gameTargetDir":"D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/content/csgo_addons/bgkoka_zm_final2/panorama",
-	"stagingDir":"./panorama",
-
-	"desktopOutputDir":"C:/Users/Stratimir Petkov/Desktop/cs2-panorama-workbench/output",
-	"cs2Exe":"D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/game/bin/win64/cs2.exe",
-	"vpkExe":"D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/game/bin/win64/vpk.exe",
-	"reloadCommand":""
+  "desktopOutputDir": "C:/Users/Stratimir Petkov/Desktop/cs2-panorama-workbench/output",
+  "cs2Exe": "D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/game/bin/win64/cs2.exe",
+  "vpkExe": "D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/game/bin/win64/vpk.exe",
+  "reloadCommand": "",
+  "nonCompiledDir": "C:\\Users\\Stratimir Petkov\\Desktop\\.assets\\workshop\\panorama"
 }

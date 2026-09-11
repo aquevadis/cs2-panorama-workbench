@@ -1,14 +1,17 @@
 import React, { useMemo } from 'react';
-import { browserStyle } from './PanoramaEditor';
+import { browserKeyframesCss, browserStyle, extractPanoramaKeyframes } from './PanoramaEditor';
 
 function previewCss(vcss:string){
- return [...vcss.replace(/\/\*[\s\S]*?\*\//g,'').matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([,selector,body])=>{
+ const keyframes=extractPanoramaKeyframes(vcss);
+ const rules=[...vcss.replace(/\/\*[\s\S]*?\*\//g,'').matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([,selector,body])=>{
+  if (/^\s*(?:from|to|\d+(?:\.\d+)?%)\s*(?:,|$)/i.test(selector)) return '';
   const styles:Record<string,string>={};for(const part of body.split(';')){const colon=part.indexOf(':');if(colon>0)styles[part.slice(0,colon).trim().toLowerCase()]=part.slice(colon+1).trim()}
   const browser=browserStyle(styles);const declarations=Object.entries(browser).filter(([key])=>key!=='--panorama-wash-color').map(([key,value])=>`${key.replace(/[A-Z]/g,letter=>`-${letter.toLowerCase()}`)}:${String(value).replace(/s2r:\/\/[^\s,)]*/g,'')};`).join('');
   const selectors=selector.split(',').map(item=>item.trim()).filter(Boolean);
   const wash=styles['wash-color']?`${selectors.join(',')}::after{content:"";position:absolute;z-index:9999;inset:0;pointer-events:none;background:${styles['wash-color']};mix-blend-mode:color;border-radius:inherit;}`:'';
   return `${selectors.join(',')}{${declarations}}${wash}`;
  }).join('');
+ return `${rules}${browserKeyframesCss(keyframes)}`;
 }
 function node(el:Element,key:number):React.ReactNode{
  const attrs=Object.fromEntries([...el.attributes].map(a=>[a.name,a.value])); const children=[...el.children].map((c,i)=>node(c,i));
